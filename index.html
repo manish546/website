@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ToolHub — Free Online Tools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --accent:#4f46e5;
+      --accent-light:#6366f1;
+      --accent-dark:#4338ca;
+      --radius:20px;
+      --max-w:1100px;
+      --card-bg: #ffffff;
+      --header-bg: #ffffff;
+      --footer-bg: #f9fafb;
+      --border-color: #e5e7eb;
+      --shadow: 0 4px 6px rgba(0,0,0,0.03);
+      --hover-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Dark theme */
+    [data-theme="dark"] {
+      --bg: #111827;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #818cf8;
+      --accent-light: #a5b4fc;
+      --accent-dark: #6366f1;
+      --card-bg: #1f2937;
+      --header-bg: #1f2937;
+      --footer-bg: #111827;
+      --border-color: #374151;
+      --shadow: 0 4px 6px rgba(0,0,0,0.2);
+      --hover-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Warm theme */
+    [data-theme="warm"] {
+      --bg: #fef7ed;
+      --text: #431407;
+      --muted: #9a3412;
+      --accent: #ea580c;
+      --accent-light: #fdba74;
+      --accent-dark: #c2410c;
+      --card-bg: #fff7ed;
+      --header-bg: #fff7ed;
+      --footer-bg: #ffedd5;
+      --border-color: #fed7aa;
+      --shadow: 0 4px 6px rgba(234, 88, 12, 0.1);
+      --hover-shadow: 0 8px 20px rgba(234, 88, 12, 0.15);
+    }
+
+    /* Cool theme */
+    [data-theme="cool"] {
+      --bg: #f0f9ff;
+      --text: #082f49;
+      --muted: #0c4a6e;
+      --accent: #0369a1;
+      --accent-light: #0ea5e9;
+      --accent-dark: #075985;
+      --card-bg: #e0f2fe;
+      --header-bg: #e0f2fe;
+      --footer-bg: #bae6fd;
+      --border-color: #bae6fd;
+      --shadow: 0 4px 6px rgba(3, 105, 161, 0.1);
+      --hover-shadow: 0 8px 20px rgba(3, 105, 161, 0.15);
+    }
+
+    body{
+      margin:0;
+      font-family:'Inter', sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .container{max-width:var(--max-w);margin:auto;padding:0 16px;}
+
+    /* Theme Switcher */
+    .theme-switcher {
+      position: relative;
+      display: inline-block;
+    }
+    .theme-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.3s;
+    }
+    .theme-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .theme-options {
+      display: none;
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: var(--hover-shadow);
+      border: 1px solid var(--border-color);
+      z-index: 100;
+      width: 150px;
+    }
+    .theme-options.show {
+      display: block;
+    }
+    .theme-option {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 5px;
+      transition: background 0.2s;
+    }
+    .theme-option:hover {
+      background: rgba(79, 70, 229, 0.1);
+    }
+    .theme-option:last-child {
+      margin-bottom: 0;
+    }
+    .theme-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .theme-default .theme-color { background: #4f46e5; }
+    .theme-dark .theme-color { background: #1f2937; }
+    .theme-warm .theme-color { background: #ea580c; }
+    .theme-cool .theme-color { background: #0369a1; }
+
+    /* NAVBAR - Improved for desktop */
+    .navbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:var(--header-bg);
+      border-bottom:1px solid var(--border-color);
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    .nav-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 16px;
+      gap:16px;
+      position: relative;
+    }
+    .brand{
+      font-weight:700;
+      font-size:20px;
+      color:var(--accent);
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      transition: color 0.3s;
+    }
+    .nav-links{
+      display:flex;
+      gap:20px;
+      align-items:center;
+    }
+    .nav-links a{
+      text-decoration:none;
+      color:var(--text);
+      font-weight:500;
+      transition:color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover{
+      color:var(--accent);
+    }
+    .searchbar{
+      flex:1;
+      max-width:400px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 16px;
+      border:1px solid var(--border-color);
+      border-radius:999px;
+      transition:box-shadow 0.2s;
+      background: var(--card-bg);
+    }
+    .searchbar:focus-within{
+      box-shadow:0 0 0 2px rgba(79, 70, 229, 0.2);
+      border-color:var(--accent);
+    }
+    .searchbar input{
+      border:none;
+      outline:none;
+      font-size:14px;
+      width:100%;
+      background:transparent;
+      color: var(--text);
+    }
+    .search-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .search-btn:hover {
+      background: var(--accent-dark);
+    }
+    .hamburger{
+      display:none;
+      font-size:20px;
+      background:none;
+      border:none;
+      cursor:pointer;
+      color:var(--text);
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Desktop-specific nav layout */
+    @media (min-width: 769px) {
+      .nav-inner {
+        justify-content: space-between;
+      }
+      
+      .brand {
+        order: 1;
+        flex: 0 0 auto;
+      }
+      
+      .nav-links {
+        order: 2;
+        flex: 1;
+        justify-content: center;
+        margin: 0 20px;
+      }
+      
+      .nav-right {
+        order: 3;
+        flex: 0 0 auto;
+      }
+      
+      /* Hide full search bar on desktop, show icon only */
+      .searchbar {
+        display: none;
+      }
+      
+      .search-btn {
+        display: flex;
+      }
+      
+      /* Expanded search bar for desktop */
+      .search-expanded {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60%;
+        max-width: 500px;
+        z-index: 100;
+        display: flex !important;
+        animation: expandSearch 0.3s ease-out;
+        box-shadow: var(--hover-shadow);
+      }
+    }
+
+    @keyframes expandSearch {
+      from {
+        width: 40px;
+        opacity: 0;
+      }
+      to {
+        width: 60%;
+        opacity: 1;
+      }
+    }
+
+    /* HERO - Reduced height */
+    .hero{
+      text-align:center;
+      padding:40px 16px; /* Reduced from 60px */
+      position:relative;
+      overflow:hidden;
+    }
+    .hero h1{
+      font-size:32px;
+      margin:0;
+    }
+    .hero p{
+      color:var(--muted);
+      margin-top:10px;
+      font-size:16px;
+      max-width:600px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .btns{
+      margin-top:20px;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .btn{
+      background:var(--accent);
+      color:white;
+      padding:10px 20px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      transition:all 0.2s;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn:hover{
+      background:var(--accent-dark);
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .btn.outline{
+      background:none;
+      color:var(--accent);
+      border:2px solid var(--accent);
+    }
+    .btn.outline:hover{
+      background:var(--accent);
+      color:white;
+    }
+
+    /* STATS - Reduced size */
+    .stats{
+      background:var(--footer-bg);
+      padding:20px 0; /* Reduced from 40px */
+      transition: background-color 0.3s;
+    }
+    .stats-inner{
+      display:flex;
+      justify-content:space-around;
+      gap:20px; /* Reduced from 30px */
+      text-align:center;
+      flex-wrap:wrap;
+    }
+    .stat h2{
+      margin:0;
+      font-size:24px; /* Reduced from 28px */
+      color:var(--accent);
+    }
+    .stat p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size: 14px; /* Added smaller font */
+    }
+
+    /* TOOLS - Added spacing */
+    .tools{
+      padding:40px 0;
+    }
+    .tools h2{
+      text-align:center;
+      font-size:26px;
+      margin-bottom:30px; /* Increased spacing */
+    }
+
+    /* CATEGORY FILTER - Added spacing */
+    .categories{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:12px;
+      margin-bottom:40px; /* Increased spacing */
+    }
+    .cat-btn{
+      padding:8px 18px;
+      border-radius:999px;
+      border:1px solid var(--border-color);
+      background:var(--card-bg);
+      cursor:pointer;
+      font-weight:500;
+      color:var(--text);
+      transition:0.2s;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      position:relative;
+      transition: all 0.3s;
+    }
+    .cat-btn.active{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent);
+    }
+    .cat-btn:hover:not(.active){
+      background:var(--accent-light);
+      color: white;
+    }
+    .cat-count{
+      font-size:12px;
+      background:rgba(0,0,0,0.1);
+      border-radius:10px;
+      padding:2px 6px;
+      position:absolute;
+      top:-8px;
+      right:-8px;
+    }
+    .cat-btn.active .cat-count{
+      background:rgba(255,255,255,0.3);
+    }
+
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+    .card{
+      border:1px solid var(--border-color);
+      border-radius:var(--radius);
+      padding:20px;
+      text-align:center;
+      background:var(--card-bg);
+      transition:0.2s;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+    }
+    .card:hover{
+      box-shadow: var(--hover-shadow);
+      transform:translateY(-2px);
+    }
+    .card-icon{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:rgba(79, 70, 229, 0.1);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:16px;
+    }
+    .card-icon i{
+      font-size:24px;
+      color:var(--accent);
+    }
+    .card h3{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .card p{
+      font-size:14px;
+      color:var(--muted);
+      margin:0 0 16px;
+      flex-grow:1;
+    }
+    .card .btn{
+      margin-top:auto;
+      font-size:14px;
+      padding:8px 16px;
+    }
+
+    /* EMPTY STATE */
+    .no-results{
+      display:none;
+      text-align:center;
+      padding:40px;
+      border:1px solid var(--border-color);
+      border-radius:var(--radius);
+      background:var(--card-bg);
+      color:var(--muted);
+      font-size:16px;
+      grid-column:1/-1;
+      box-shadow:0 6px 12px rgba(0,0,0,0.05);
+    }
+    .no-results i{
+      font-size:28px;
+      color:var(--accent);
+      margin-bottom:10px;
+      display:block;
+    }
+
+    /* HOW IT WORKS PAGE */
+    .how-it-works {
+      display: none;
+      padding: 40px 0;
+    }
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 40px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    .step-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--hover-shadow);
+    }
+    .step-number {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 auto 20px;
+    }
+    .step-card h3 {
+      margin: 0 0 15px;
+      color: var(--accent);
+    }
+    .step-card p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .features {
+      background: var(--footer-bg);
+      padding: 50px 0;
+      border-radius: var(--radius);
+    }
+    .features h3 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 28px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+    .feature-icon {
+      background: var(--accent);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .feature-content h4 {
+      margin: 0 0 10px;
+    }
+    .feature-content p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* FOOTER - Improved design */
+    footer{
+      background:var(--footer-bg);
+      padding:40px 16px 20px;
+      margin-top:60px;
+      transition: background-color 0.3s;
+      border-top: 1px solid var(--border-color);
+    }
+    .footer-inner{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap:30px;
+      max-width:var(--max-w);
+      margin:auto;
+    }
+    .footer-col{
+      display: flex;
+      flex-direction: column;
+    }
+    .footer-col h4{
+      margin:0 0 15px;
+      font-size:18px;
+      color: var(--accent);
+      position: relative;
+      padding-bottom: 10px;
+    }
+    .footer-col h4::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      height: 2px;
+      background: var(--accent);
+    }
+    .footer-col a{
+      display:flex;
+      align-items:center;
+      text-decoration:none;
+      color:var(--muted);
+      margin:8px 0;
+      font-size:15px;
+      transition:color 0.2s, transform 0.2s;
+      gap: 10px;
+    }
+    .footer-col a:hover{
+      color:var(--accent);
+      transform: translateX(5px);
+    }
+    .footer-col a i {
+      width: 20px;
+      text-align: center;
+    }
+    .copy{
+      text-align:center;
+      margin-top:40px;
+      color:var(--muted);
+      font-size:14px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      max-width: var(--max-w);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      color: var(--text);
+      transition: all 0.3s;
+      border: 1px solid var(--border-color);
+    }
+    .social-links a:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    /* ANIMATED PARTICLES - Updated for full page */
+    #particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .particle{
+      position:absolute;
+      border-radius:50%;
+      opacity:0.5;
+      animation:float 12s infinite ease-in-out;
+    }
+    .p1{width:12px;height:12px;background:var(--accent);top:20%;left:10%;animation-duration:15s;}
+    .p2{width:18px;height:18px;background:#f43f5e;top:40%;left:80%;animation-duration:18s;}
+    .p3{width:10px;height:10px;background:#10b981;top:70%;left:30%;animation-duration:12s;}
+    .p4{width:14px;height:14px;background:#f59e0b;top:10%;left:70%;animation-duration:20s;}
+    .p5{width:20px;height:20px;background:#3b82f6;top:85%;left:50%;animation-duration:22s;}
+    .p6{width:8px;height:8px;background:#8b5cf6;top:60%;left:5%;animation-duration:14s;}
+    .p7{width:16px;height:16px;background:#ec4899;top:30%;left:90%;animation-duration:16s;}
+    .p8{width:12px;height:12px;background:#06b6d4;top:75%;left:85%;animation-duration:19s;}
+    .p9{width:14px;height:14px;background:#84cc16;top:5%;left:40%;animation-duration:21s;}
+    .p10{width:10px;height:10px;background:#f97316;top:90%;left:15%;animation-duration:13s;}
+
+    @keyframes float{
+      0%{transform:translateY(0) translateX(0);}
+      50%{transform:translateY(-40px) translateX(20px);}
+      100%{transform:translateY(0) translateX(0);}
+    }
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .grid{grid-template-columns:repeat(2,1fr);}
+      .stats-inner{justify-content:center;gap:40px;}
+    }
+    
+    @media (max-width:768px){
+      /* Mobile nav adjustments */
+      .nav-inner {
+        justify-content: space-between;
+      }
+      
+      .brand {
+        order: 2;
+        flex: 1;
+        justify-content: center;
+      }
+      
+      .nav-right {
+        order: 3;
+      }
+      
+      .hamburger {
+        order: 1;
+        display: flex;
+      }
+      
+      .nav-links{
+        display:none;
+        flex-direction:column;
+        gap:10px;
+        padding:10px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--header-bg);
+        border-bottom:1px solid var(--border-color);
+        box-shadow:0 4px 6px rgba(0,0,0,0.05);
+        z-index: 100;
+      }
+      .nav-links.show{
+        display:flex;
+      }
+      
+      .grid{grid-template-columns:1fr;}
+      .stats-inner{flex-direction:row;overflow-x:auto;justify-content:flex-start;padding-bottom:10px;scrollbar-width:none;}
+      .stats-inner::-webkit-scrollbar{display:none;}
+      .stat{flex:0 0 auto;min-width:120px;}
+      
+      /* Search bar to button conversion */
+      .searchbar {
+        display: none;
+      }
+      .search-btn {
+        display: flex;
+      }
+      .searchbar.mobile-show {
+        display: flex;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      
+      .categories{justify-content:flex-start;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;}
+      .categories::-webkit-scrollbar{display:none;}
+      .cat-btn{flex:0 0 auto;}
+      .hero h1{font-size:28px;}
+      .hero p{font-size:15px;}
+      .card{box-shadow: var(--shadow);margin-bottom:5px;}
+    }
+    
+    @media (max-width:480px){
+      .brand span{display:none;}
+      .brand::after{content:"ToolHub";}
+      .stats-inner{gap:30px;}
+      .stat{min-width:100px;}
+      .stat h2{font-size:24px;}
+      .stat p{font-size:14px;}
+      .footer-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .footer-col h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .social-links {
+        justify-content: center;
+      }
+      .steps, .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle container for full page -->
+  <div id="particles-container"></div>
+
+  <!-- NAV -->
+  <header class="navbar">
+    <div class="nav-inner container">
+      <button class="hamburger" id="hambBtn"><i class="fa fa-bars"></i></button>
+      
+      <a href="#" class="brand"><i class="fa fa-bolt"></i> <span>ToolHub</span></a>
+      
+      <nav class="nav-links" id="navLinks">
+        <a href="#" class="nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+        <a href="#tools" class="nav-link" data-page="tools"><i class="fas fa-tools"></i> All Tools</a>
+        <a href="#" class="nav-link" data-page="how-it-works"><i class="fas fa-question-circle"></i> How It Works</a>
+        <a href="#"><i class="fas fa-tag"></i> Pricing</a>
+        <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+      </nav>
+      
+      <div class="nav-right">
+        <button class="search-btn" id="searchBtn">
+          <i class="fa fa-search"></i>
+        </button>
+        
+        <div class="theme-switcher">
+          <button class="theme-btn" id="themeBtn">
+            <i class="fas fa-palette"></i>
+          </button>
+          <div class="theme-options" id="themeOptions">
+            <div class="theme-option theme-default" data-theme="default">
+              <div class="theme-color"></div>
+              <span>Default</span>
+            </div>
+            <div class="theme-option theme-dark" data-theme="dark">
+              <div class="theme-color"></div>
+              <span>Dark</span>
+            </div>
+            <div class="theme-option theme-warm" data-theme="warm">
+              <div class="theme-color"></div>
+              <span>Warm</span>
+            </div>
+            <div class="theme-option theme-cool" data-theme="cool">
+              <div class="theme-color"></div>
+              <span>Cool</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hidden search bar for desktop -->
+      <form class="searchbar" id="desktopSearch">
+        <i class="fa fa-search"></i>
+        <input type="search" id="searchInput" placeholder="Search tools...">
+      </form>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="homeSection">
+    <h1>Free Online Tools for Everyone</h1>
+    <p>Convert, compress, and edit your files instantly. No signup, always free.</p>
+    <div class="btns">
+      <a href="#tools" class="btn"><i class="fas fa-tools"></i> Explore Tools</a>
+      <a href="#" class="btn outline" id="howItWorksBtn"><i class="fas fa-question-circle"></i> How it Works</a>
+    </div>
+  </section>
+
+  <!-- STATS - Reduced size -->
+  <section class="stats">
+    <div class="stats-inner container">
+      <div class="stat"><h2>2M+</h2><p>Downloads</p></div>
+      <div class="stat"><h2>500K+</h2><p>Users</p></div>
+      <div class="stat"><h2>50+</h2><p>Tools Available</p></div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section class="tools container" id="toolsSection">
+    <h2>Popular Tools</h2>
+
+    <!-- CATEGORY FILTER -->
+    <div class="categories">
+      <button class="cat-btn active" data-cat="all">
+        <i class="fas fa-th"></i> All
+        <span class="cat-count">12</span>
+      </button>
+      <button class="cat-btn" data-cat="pdf">
+        <i class="fas fa-file-pdf"></i> PDF
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" data-cat="image">
+        <i class="fas fa-image"></i> Image
+        <span class="cat-count">5</span>
+      </button>
+      <button class="cat-btn" data-cat="video">
+        <i class="fas fa-video"></i> Video
+        <span class="cat-count">2</span>
+      </button>
+      <button class="cat-btn" data-cat="document">
+        <i class="fas fa-file-alt"></i> Document
+        <span class="cat-count">3</span>
+      </button>
+      <button class="cat-btn" data-cat="other">
+        <i class="fas fa-cubes"></i> Other
+        <span class="cat-count">3</span>
+      </button>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid" id="toolGrid">
+      <div class="card" data-cat="pdf" data-name="Image to PDF Converter">
+        <div class="card-icon"><i class="fas fa-file-pdf"></i></div>
+        <h3>Image → PDF</h3>
+        <p>Convert images into high-quality PDFs quickly.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="image" data-name="PDF to Image Converter">
+        <div class="card-icon"><i class="fas fa-image"></i></div>
+        <h3>PDF → Image</h3>
+        <p>Turn PDF pages into images instantly.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="image" data-name="Image Compressor">
+        <div class="card-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+        <h3>Image Compressor</h3>
+        <p>Reduce image size without losing quality.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="video" data-name="Video Converter">
+        <div class="card-icon"><i class="fas fa-video"></i></div>
+        <h3>Video Converter</h3>
+        <p>Convert videos to different formats fast.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="document" data-name="Word to PDF Converter">
+        <div class="card-icon"><i class="fas fa-file-word"></i></div>
+        <h3>Word → PDF</h3>
+        <p>Convert Word documents into PDF instantly.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="other" data-name="Password Generator">
+        <div class="card-icon"><i class="fas fa-lock"></i></div>
+        <h3>Password Generator</h3>
+        <p>Create secure random passwords online.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="pdf" data-name="PDF Merger">
+        <div class="card-icon"><i class="fas fa-object-group"></i></div>
+        <h3>PDF Merger</h3>
+        <p>Combine multiple PDF files into one document.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="image" data-name="Image Resizer">
+        <div class="card-icon"><i class="fas fa-expand-alt"></i></div>
+        <h3>Image Resizer</h3>
+        <p>Resize your images to any dimension.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+      <div class="card" data-cat="other" data-name="QR Code Generator">
+        <div class="card-icon"><i class="fas fa-qrcode"></i></div>
+        <h3>QR Code Generator</h3>
+        <p>Create custom QR codes for URLs and text.</p>
+        <a href="#" class="btn">Try Now</a>
+      </div>
+    </div>
+
+    <!-- NO RESULTS -->
+    <div class="no-results" id="noResults">
+      <i class="fa fa-search"></i>
+      <p>No tools found matching your search.</p>
+      <p>Try a different keyword or category.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS SECTION -->
+  <section class="how-it-works container" id="howItWorksSection">
+    <h2>How ToolHub Works</h2>
+    
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Choose Your Tool</h3>
+        <p>Browse our collection of free online tools and select the one that meets your needs. We have tools for PDF conversion, image editing, video processing, and more.</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Upload Your File</h3>
+        <p>Upload the file you want to process. Our tools support various file formats and ensure your data remains secure throughout the process.</p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Process & Download</h3>
+        <p>Let our tools work their magic! Once processing is complete, download your converted, compressed, or edited file instantly.</p>
+      </div>
+    </div>
+    
+    <div class="features">
+      <h3>Why Choose ToolHub?</h3>
+      
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <div class="feature-content">
+            <h4>Secure Processing</h4>
+            <p>Your files are processed securely and never stored on our servers after processing.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="feature-content">
+            <h4>Fast Results</h4>
+            <p>Our tools are optimized for speed, delivering results in seconds rather than minutes.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div class="feature-content">
+            <h4>Completely Free</h4>
+            <p>All our tools are free to use with no hidden fees or subscription requirements.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-desktop"></i>
+          </div>
+          <div class="feature-content">
+            <h4>No Installation</h4>
+            <p>Use our tools directly in your browser without downloading or installing any software.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER - Improved -->
+  <footer>
+    <div class="footer-inner container">
+      <div class="footer-col">
+        <h4>ToolHub</h4>
+        <a href="#"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#"><i class="fas fa-blog"></i> Blog</a>
+        <a href="#"><i class="fas fa-briefcase"></i> Careers</a>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="#"><i class="fas fa-tools"></i> All Tools</a>
+        <a href="#"><i class="fas fa-fire"></i> Popular</a>
+        <a href="#"><i class="fas fa-star"></i> New</a>
+        <a href="#"><i class="fas fa-chart-line"></i> Most Used</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
+        <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="#"><i class="fas fa-file-contract"></i> Terms</a>
+        <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Subscribe</h4>
+        <p style="color: var(--muted); margin: 8px 0; font-size: 14px;">Get updates on new tools and features</p>
+        <form style="display: flex; gap: 8px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text);">
+          <button type="submit" style="background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="copy container">© <span id="year"></span> ToolHub. All rights reserved.</div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Page navigation
+    const homeSection = document.getElementById('homeSection');
+    const toolsSection = document.getElementById('toolsSection');
+    const howItWorksSection = document.getElementById('howItWorksSection');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    function showSection(section) {
+      // Hide all sections
+      homeSection.style.display = 'none';
+      toolsSection.style.display = 'none';
+      howItWorksSection.style.display = 'none';
+      
+      // Show selected section
+      if (section === 'home') {
+        homeSection.style.display = 'block';
+        toolsSection.style.display = 'block';
+      } else if (section === 'tools') {
+        toolsSection.style.display = 'block';
+        window.scrollTo(0, toolsSection.offsetTop - 80);
+      } else if (section === 'how-it-works') {
+        howItWorksSection.style.display = 'block';
+        window.scrollTo(0, howItWorksSection.offsetTop - 80);
+      }
+      
+      // Update active nav link
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-page') === section) {
+          link.style.color = 'var(--accent)';
+          link.style.fontWeight = '600';
+        } else {
+          link.style.color = '';
+          link.style.fontWeight = '';
+        }
+      });
+    }
+    
+    // Add event listeners to navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        showSection(page);
+      });
+    });
+    
+    // How it works button
+    document.getElementById('howItWorksBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('how-it-works');
+    });
+
+    // Mobile Nav Toggle
+    const hambBtn = document.getElementById("hambBtn");
+    const mobileNavLinks = document.getElementById("navLinks");
+    hambBtn.addEventListener("click", () => {
+      mobileNavLinks.classList.toggle("show");
+      hambBtn.innerHTML = mobileNavLinks.classList.contains("show") 
+        ? '<i class="fa fa-times"></i>' 
+        : '<i class="fa fa-bars"></i>';
+    });
+
+    // Close mobile nav when clicking outside
+    document.addEventListener('click', (e) => {
+      if (mobileNavLinks.classList.contains('show') && 
+          !e.target.closest('.nav-links') && 
+          !e.target.closest('.hamburger')) {
+        mobileNavLinks.classList.remove('show');
+        hambBtn.innerHTML = '<i class="fa fa-bars"></i>';
+      }
+    });
+
+    // Category Filtering + Search
+    const buttons = document.querySelectorAll(".cat-btn");
+    const cards = document.querySelectorAll(".card");
+    const searchInput = document.getElementById("searchInput");
+    const noResults = document.getElementById("noResults");
+    const toolGrid = document.getElementById("toolGrid");
+
+    let activeCategory = "all";
+
+    function filterTools() {
+      const searchText = searchInput.value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cardCat = card.getAttribute("data-cat");
+        const cardName = card.getAttribute("data-name").toLowerCase();
+        const cardText = card.innerText.toLowerCase();
+        
+        const matchesCategory = (activeCategory === "all" || cardCat === activeCategory);
+        const matchesSearch = searchText === "" || cardName.includes(searchText) || cardText.includes(searchText);
+
+        if (matchesCategory && matchesSearch) {
+          card.style.display = "flex";
+          visibleCount++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // Show/hide no results message
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
+      
+      // Update category counts based on search results
+      updateCategoryCounts(searchText);
+    }
+
+    // Update category counts based on search results
+    function updateCategoryCounts(searchText) {
+      const categoryCounts = {
+        'all': 0,
+        'pdf': 0,
+        'image': 0,
+        'video': 0,
+        'document': 0,
+        'other': 0
+      };
+      
+      // Count visible tools in each category
+      cards.forEach(card => {
+        if (card.style.display !== 'none') {
+          const cardCat = card.getAttribute("data-cat");
+          categoryCounts[cardCat]++;
+          categoryCounts.all++;
+        }
+      });
+      
+      // Update the count badges
+      buttons.forEach(btn => {
+        const cat = btn.getAttribute("data-cat");
+        const countElement = btn.querySelector('.cat-count');
+        if (countElement) {
+          countElement.textContent = categoryCounts[cat];
+        }
+      });
+    }
+
+    // Category buttons event listeners
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeCategory = btn.getAttribute("data-cat");
+        filterTools();
+      });
+    });
+
+    // Search input event listener
+    searchInput.addEventListener("input", filterTools);
+
+    // Prevent form submission on search
+    document.querySelector('.searchbar').addEventListener('submit', (e) => {
+      e.preventDefault();
+      filterTools();
+    });
+    
+    // Initialize category counts
+    updateCategoryCounts('');
+
+    // Theme Switcher
+    const themeBtn = document.getElementById("themeBtn");
+    const themeOptions = document.getElementById("themeOptions");
+    const themeOptionsItems = document.querySelectorAll(".theme-option");
+    
+    themeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      themeOptions.classList.toggle("show");
+    });
+    
+    themeOptionsItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const theme = item.getAttribute("data-theme");
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        themeOptions.classList.remove("show");
+      });
+    });
+    
+    // Close theme options when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".theme-switcher")) {
+        themeOptions.classList.remove("show");
+      }
+    });
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme") || "default";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    
+    // Desktop search functionality
+    const searchBtn = document.getElementById("searchBtn");
+    const desktopSearch = document.getElementById("desktopSearch");
+    let searchExpanded = false;
+    
+    searchBtn.addEventListener("click", () => {
+      if (window.innerWidth > 768) {
+        // Toggle search bar on desktop
+        if (!searchExpanded) {
+          desktopSearch.classList.add("search-expanded");
+          searchInput.focus();
+          searchExpanded = true;
+        } else {
+          // If search is already expanded, perform search
+          filterTools();
+        }
+      } else {
+        // Mobile behavior
+        desktopSearch.classList.toggle("mobile-show");
+        if (desktopSearch.classList.contains("mobile-show")) {
+          searchInput.focus();
+        }
+      }
+    });
+    
+    // Close desktop search when clicking outside
+    document.addEventListener("click", (e) => {
+      if (window.innerWidth > 768 && searchExpanded && 
+          !e.target.closest(".searchbar") && 
+          !e.target.closest("#searchBtn")) {
+        desktopSearch.classList.remove("search-expanded");
+        searchExpanded = false;
+      }
+    });
+    
+    // Close desktop search on escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && searchExpanded) {
+        desktopSearch.classList.remove("search-expanded");
+        searchExpanded = false;
+      }
+    });
+    
+    // Generate particles for the entire page background
+    function generateParticles() {
+      const container = document.getElementById("particles-container");
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+        
+        // Random properties
+        const size = Math.random() * 15 + 5;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * 5;
+        const colors = [
+          "var(--accent)", 
+          "#f43f5e", 
+          "#10b981", 
+          "#f59e0b", 
+          "#3b82f6", 
+          "#8b5cf6", 
+          "#ec4899", 
+          "#06b6d4", 
+          "#84cc16", 
+          "#f97316"
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Apply styles
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = color;
+        particle.style.top = `${posY}%`;
+        particle.style.left = `${posX}%`;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        container.appendChild(particle);
+      }
+    }
+    
+    // Generate particles on load
+    window.addEventListener("load", generateParticles);
+  </script>
+</body>
+</html>
