@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Free online tool to convert images to PDF without compression. Works offline with no uploads required. Create high-quality PDFs from your images." />
+  <meta name="keywords" content="image to pdf, convert image to pdf, jpg to pdf, png to pdf, online pdf converter, no compression" />
+  <title>Image to PDF Converter - No Compression | Convert JPG, PNG to PDF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8f9fa;
+      --muted: #6c757d;
+      --text: #212529;
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --danger: #dc3545;
+      --success: #198754;
+      --warning: #ffc107;
+      --border: #dee2e6;
+      --shadow: rgba(0, 0, 0, 0.05);
+    }
+    
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      line-height: 1.5;
+    }
+    
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    header {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .title {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #2b2d42;
+    }
+    
+    .title span.logo {
+      width: 40px; 
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+    
+    .muted { 
+      color: var(--muted); 
+      font-size: 14px; 
+      font-weight: 500;
+    }
+    
+    main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    
+    @media (min-width: 992px) {
+      main {
+        grid-template-columns: 400px 1fr;
+      }
+    }
+    
+    .panel {
+      padding: 24px;
+    }
+    
+    .left {
+      background: #f9fafb;
+      border-right: 1px solid var(--border);
+    }
+    
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .drop {
+      border: 2px dashed rgba(67, 97, 238, 0.4);
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: rgba(67, 97, 238, 0.03);
+    }
+    
+    .drop.dragover {
+      background: rgba(67, 97, 238, 0.08);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    
+    .drop h3 {
+      margin-bottom: 8px;
+      color: #2b2d42;
+      font-weight: 600;
+    }
+    
+    .controls { 
+      display: grid; 
+      gap: 16px; 
+      margin-top: 20px; 
+    }
+    
+    label.small { 
+      font-size: 13px; 
+      color: var(--muted); 
+      display: block; 
+      margin-bottom: 6px; 
+      font-weight: 500;
+    }
+    
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    select:focus, input[type="number"]:focus, input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .btn {
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .btn.primary { 
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark)); 
+      color: white; 
+      box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    }
+    
+    .btn.secondary { 
+      background: #ffffff; 
+      color: #495057; 
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px var(--shadow);
+    }
+    
+    .btn.danger { 
+      background: linear-gradient(180deg, var(--danger), #c82333); 
+      color: white; 
+      box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+    }
+    
+    .btn.success { 
+      background: linear-gradient(180deg, var(--success), #0f5132); 
+      color: white; 
+      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+    }
+    
+    .btn:disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    
+    .btn:not(:disabled):hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .btn:not(:disabled):active {
+      transform: translateY(0);
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    
+    .thumb {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .thumb:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .thumb img { 
+      display: block; 
+      width: 100%; 
+      height: 140px; 
+      object-fit: cover; 
+    }
+    
+    .thumb .meta {
+      position: absolute; 
+      inset: auto 8px 8px 8px;
+      display: flex; 
+      gap: 6px; 
+      justify-content: space-between;
+    }
+    
+    .chip {
+      font-size: 11px; 
+      padding: 5px 10px;
+      background: rgba(0, 0, 0, 0.75);
+      color: white;
+      border-radius: 999px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+      backdrop-filter: blur(4px);
+    }
+    
+    .row { 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap; 
+      align-items: center; 
+    }
+    
+    .between { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 12px; 
+      flex-wrap: wrap;
+    }
+    
+    footer { 
+      padding: 20px 24px; 
+      border-top: 1px solid var(--border); 
+      text-align: center; 
+      color: var(--muted); 
+      font-size: 13px; 
+      background: #f9fafb;
+    }
+    
+    .hidden { 
+      display: none !important; 
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+      }
+      
+      .panel {
+        padding: 20px;
+      }
+      
+      .controls .row {
+        flex-direction: column;
+      }
+      
+      .controls .row > div {
+        width: 100%;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      }
+    }
+    
+    /* Rotation controls */
+    .rotation-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .rotate-btn {
+      flex: 1;
+      padding: 10px;
+      background: #f1f3f5;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .rotate-btn:hover {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+    
+    .rotate-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* Image actions */
+    .image-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    
+    .action-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    
+    .action-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
+    
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    /* Button container for create/download */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .button-group .btn {
+      flex: 1;
+    }
+    
+    /* Ad container styling */
+    .ad-container {
+      width: 100%;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      min-height: 90px;
+    }
+    
+    /* Preview section */
+    .preview-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .preview-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .pdf-preview {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .pdf-preview:hover {
+      transform: scale(1.02);
+    }
+    
+    .pdf-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .preview-placeholder {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      color: var(--muted);
+    }
+    
+    .preview-placeholder svg {
+      margin-bottom: 10px;
+      opacity: 0.7;
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      position: relative;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    
+    .modal-close:hover {
+      color: var(--danger);
+    }
+    
+    .modal-iframe {
+      width: 100%;
+      height: 80vh;
+      border: none;
+      border-radius: 8px;
+    }
+    
+    /* Preview actions */
+    .preview-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title"><span class="logo">PDF</span> Image → PDF Converter</div>
+      <div class="muted">No Compression • Works offline • No upload required</div>
+    </header>
+    
+    <!-- Ad Container -->
+    <div class="ad-container">
+      <!-- Google AdSense Placeholder -->
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; color: #6c757d; width: 100%;">
+        <p>Ad Space (Google AdSense)</p>
+      </div>
+    </div>
+    
+    <main>
+      <section class="left panel">
+        <div id="drop" class="drop card">
+          <h3>Drag & drop images</h3>
+          <p class="muted">or click to select files</p>
+          <input id="file" type="file" accept="image/*" multiple class="hidden">
+        </div>
+
+        <div class="card controls">
+          <div class="row">
+            <div style="flex:1">
+              <label class="small">Page size</label>
+              <select id="pageSize">
+                <option value="a4" selected>A4 (210×297mm)</option>
+                <option value="letter">US Letter (8.5×11in)</option>
+                <option value="legal">US Legal (8.5×14in)</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Orientation</label>
+              <select id="orientation">
+                <option value="portrait" selected>Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div style="flex:1">
+              <label class="small">Fit</label>
+              <select id="fitMode">
+                <option value="contain" selected>Contain (keep aspect)</option>
+                <option value="cover">Cover (fill page)</option>
+                <option value="stretch">Stretch (distort)</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Margin (mm)</label>
+              <input id="margin" type="number" min="0" max="50" step="1" value="10">
+            </div>
+          </div>
+
+          <div class="row">
+            <div style="flex:1">
+              <label class="small">PDF name</label>
+              <input id="pdfName" type="text" value="images.pdf">
+            </div>
+            <div>
+              <label class="small">Compression</label>
+              <select id="compression" disabled>
+                <option value="none" selected>None (High Quality)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="between" style="margin-top: 8px;">
+            <button id="clear" class="btn secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+              Clear
+            </button>
+            <div class="row">
+              <button id="sortAZ" class="btn secondary">Sort A→Z</button>
+              <button id="sortZA" class="btn secondary">Sort Z→A</button>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="createPdf" class="btn primary" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
+                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+              </svg>
+              Create PDF
+            </button>
+            <button id="downloadPdf" class="btn success" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+        </div>
+        
+        <!-- PDF Preview Section -->
+        <div class="preview-section">
+          <div class="preview-header">
+            <h3>PDF Preview</h3>
+          </div>
+          <div class="preview-content">
+            <div id="pdfPreview" class="preview-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <path d="M10 9H8"></path>
+                <path d="M16 13H8"></path>
+                <path d="M16 17H8"></path>
+              </svg>
+              <p>PDF will be generated here</p>
+            </div>
+            <div class="preview-actions">
+              <button id="viewPdf" class="btn secondary" disabled>View PDF</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="between" style="margin-bottom:16px;">
+          <div class="muted">Reorder by drag & drop • Click to select</div>
+          <div class="row">
+            <button id="reverse" class="btn secondary">Reverse</button>
+            <button id="deleteSelected" class="btn danger" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+              Delete Selected
+            </button>
+          </div>
+        </div>
+        <div id="grid" class="grid card" aria-live="polite"></div>
+      </section>
+    </main>
+    
+    <!-- PDF Preview Modal -->
+    <div id="pdfModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <iframe id="pdfViewer" class="modal-iframe" src="about:blank"></iframe>
+      </div>
+    </div>
+    
+    <footer>Made with ♥ — runs entirely in your browser • No image compression</footer>
+  </div>
+
+<script>
+const { jsPDF } = window.jspdf;
+
+const els = {
+  drop: document.getElementById('drop'),
+  file: document.getElementById('file'),
+  grid: document.getElementById('grid'),
+  clear: document.getElementById('clear'),
+  createPdf: document.getElementById('createPdf'),
+  downloadPdf: document.getElementById('downloadPdf'),
+  sortAZ: document.getElementById('sortAZ'),
+  sortZA: document.getElementById('sortZA'),
+  reverse: document.getElementById('reverse'),
+  deleteSelected: document.getElementById('deleteSelected'),
+  pageSize: document.getElementById('pageSize'),
+  orientation: document.getElementById('orientation'),
+  fitMode: document.getElementById('fitMode'),
+  margin: document.getElementById('margin'),
+  pdfName: document.getElementById('pdfName'),
+  pdfPreview: document.getElementById('pdfPreview'),
+  viewPdf: document.getElementById('viewPdf'),
+  pdfModal: document.getElementById('pdfModal'),
+  modalClose: document.querySelector('.modal-close'),
+  pdfViewer: document.getElementById('pdfViewer')
+};
+
+let items = []; // [{name, dataUrl, w, h, selected, rotation}]
+let generatedPdf = null;
+let pdfBlob = null;
+
+// --- File intake ---
+els.drop.addEventListener('click', () => els.file.click());
+for (const ev of ['dragenter','dragover']) {
+  els.drop.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); els.drop.classList.add('dragover'); });
+}
+for (const ev of ['dragleave','drop']) {
+  els.drop.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); els.drop.classList.remove('dragover'); });
+}
+els.drop.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+els.file.addEventListener('change', e => handleFiles(e.target.files));
+
+function handleFiles(fileList){
+  const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  Promise.all(files.map(f => fileToItem(f))).then(arr => {
+    items.push(...arr);
+    render();
+  });
+}
+
+function fileToItem(file){
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => {
+      const img = new Image();
+      img.onload = () => res({ 
+        name: file.name, 
+        dataUrl: e.target.result, 
+        w: img.width, 
+        h: img.height, 
+        selected: false,
+        rotation: 0
+      });
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// --- Render grid and enable drag-reorder ---
+function render(){
+  els.grid.innerHTML = '';
+  items.forEach((it, idx) => {
+    const card = document.createElement('div');
+    card.className = 'thumb';
+    card.draggable = true;
+    card.dataset.index = idx;
+
+    const img = document.createElement('img');
+    img.src = it.dataUrl;
+    img.alt = it.name;
+    img.style.transform = `rotate(${it.rotation}deg)`;
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const left = document.createElement('div');
+    left.className = 'row';
+    const chip1 = document.createElement('span'); 
+    chip1.className = 'chip'; 
+    chip1.textContent = it.name;
+    
+    const chip2 = document.createElement('span'); 
+    chip2.className = 'chip'; 
+    chip2.textContent = `${it.w}×${it.h}`;
+    
+    left.append(chip1, chip2);
+
+    const right = document.createElement('div');
+    const sel = document.createElement('input'); 
+    sel.type = 'checkbox'; 
+    sel.checked = !!it.selected;
+    sel.addEventListener('change', () => { 
+      it.selected = sel.checked; 
+      syncButtons(); 
+    });
+    right.appendChild(sel);
+
+    // Image actions (rotation)
+    const actions = document.createElement('div');
+    actions.className = 'image-actions';
+    
+    const rotateLeftBtn = document.createElement('button');
+    rotateLeftBtn.className = 'action-btn';
+    rotateLeftBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+      </svg>
+    `;
+    rotateLeftBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      it.rotation = (it.rotation - 90) % 360;
+      img.style.transform = `rotate(${it.rotation}deg)`;
+    });
+    
+    const rotateRightBtn = document.createElement('button');
+    rotateRightBtn.className = 'action-btn';
+    rotateRightBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+        <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192l-2.36 1.966c-.12.1-.12.284 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+      </svg>
+    `;
+    rotateRightBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      it.rotation = (it.rotation + 90) % 360;
+      img.style.transform = `rotate(${it.rotation}deg)`;
+    });
+    
+    actions.append(rotateLeftBtn, rotateRightBtn);
+
+    meta.append(left, right);
+    card.append(img, meta, actions);
+
+    // drag logic
+    card.addEventListener('dragstart', e => { 
+      e.dataTransfer.setData('text/plain', idx.toString()); 
+    });
+    card.addEventListener('dragover', e => { e.preventDefault(); });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = Number(e.dataTransfer.getData('text/plain'));
+      const to = Number(card.dataset.index);
+      moveItem(from, to);
+    });
+
+    // Select on click
+    card.addEventListener('click', (e) => {
+      if (e.target !== sel && !e.target.closest('.action-btn')) {
+        it.selected = !it.selected;
+        sel.checked = it.selected;
+        syncButtons();
+      }
+    });
+
+    els.grid.appendChild(card);
+  });
+  syncButtons();
+}
+
+function moveItem(from, to){
+  if (from === to) return;
+  const [spliced] = items.splice(from, 1);
+  items.splice(to, 0, spliced);
+  render();
+}
+
+function syncButtons(){
+  const hasItems = items.length > 0;
+  els.createPdf.disabled = !hasItems;
+  els.downloadPdf.disabled = generatedPdf === null;
+  els.viewPdf.disabled = generatedPdf === null;
+  els.deleteSelected.disabled = !items.some(it => it.selected);
+}
+
+// --- Controls ---
+els.clear.addEventListener('click', () => { 
+  items = []; 
+  generatedPdf = null;
+  pdfBlob = null;
+  resetPreview();
+  render(); 
+});
+els.reverse.addEventListener('click', () => { items.reverse(); render(); });
+els.sortAZ.addEventListener('click', () => { items.sort((a,b)=> a.name.localeCompare(b.name)); render(); });
+els.sortZA.addEventListener('click', () => { items.sort((a,b)=> b.name.localeCompare(a.name)); render(); });
+els.deleteSelected.addEventListener('click', () => { 
+  items = items.filter(it => !it.selected); 
+  render(); 
+});
+
+// Create PDF function
+els.createPdf.addEventListener('click', async () => {
+  if (!items.length) return;
+  const size = els.pageSize.value;
+  const orient = els.orientation.value;
+  const marginMM = clamp(parseFloat(els.margin.value)||0, 0, 50);
+  const name = els.pdfName.value.trim() || 'images.pdf';
+  const fit = els.fitMode.value;
+
+  const pdf = new jsPDF({ 
+    orientation: orient, 
+    unit: 'mm', 
+    format: size,
+    compress: false // Disable compression
+  });
+  
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  for (let i=0; i<items.length; i++){
+    const it = items[i];
+    if (i>0) pdf.addPage();
+    
+    const img = await loadImage(it.dataUrl);
+    const availW = Math.max(0, pageW - 2*marginMM);
+    const availH = Math.max(0, pageH - 2*marginMM);
+
+    let drawW = availW, drawH = availH;
+    if (fit === 'contain'){
+      const ar = img.width / img.height;
+      drawW = Math.min(availW, availH * ar);
+      drawH = drawW / ar;
+      if (drawH > availH) { drawH = availH; drawW = drawH * ar; }
+    } else if (fit === 'cover'){
+      const ar = img.width / img.height;
+      drawW = Math.max(availW, availH * ar);
+      drawH = drawW / ar;
+      if (drawH < availH) { drawH = availH; drawW = drawH * ar; }
+    } else if (fit === 'stretch'){
+      drawW = availW; drawH = availH;
+    }
+
+    const x = (pageW - drawW)/2;
+    const y = (pageH - drawH)/2;
+    
+    // Apply rotation if needed
+    if (it.rotation !== 0) {
+      pdf.rotate(it.rotation, { origin: [x + drawW/2, y + drawH/2] });
+    }
+    
+    // Add image without compression
+    pdf.addImage({
+      imageData: img,
+      x: x,
+      y: y,
+      width: drawW,
+      height: drawH,
+      compression: 'NONE' // No compression
+    });
+    
+    // Reset rotation for next image
+    if (it.rotation !== 0) {
+      pdf.rotate(-it.rotation, { origin: [x + drawW/2, y + drawH/2] });
+    }
+  }
+
+  generatedPdf = pdf;
+  
+  // Generate PDF blob for preview
+  pdfBlob = pdf.output('blob');
+  
+  // Create preview
+  createPdfPreview(pdfBlob);
+  syncButtons();
+});
+
+// Download PDF function
+els.downloadPdf.addEventListener('click', () => {
+  if (!generatedPdf) return;
+  const name = els.pdfName.value.trim() || 'images.pdf';
+  generatedPdf.save(name);
+});
+
+// View PDF function
+els.viewPdf.addEventListener('click', () => {
+  if (!pdfBlob) return;
+  const blobUrl = URL.createObjectURL(pdfBlob);
+  els.pdfViewer.src = blobUrl;
+  els.pdfModal.style.display = 'flex';
+});
+
+// Close modal function
+els.modalClose.addEventListener('click', () => {
+  els.pdfModal.style.display = 'none';
+  els.pdfViewer.src = 'about:blank';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === els.pdfModal) {
+    els.pdfModal.style.display = 'none';
+    els.pdfViewer.src = 'about:blank';
+  }
+});
+
+// Create PDF preview
+function createPdfPreview(blob) {
+  const url = URL.createObjectURL(blob);
+  
+  // Create a thumbnail of the first page
+  const iframe = document.createElement('iframe');
+  iframe.src = url + '#toolbar=0&navpanes=0&scrollbar=0&view=fitH';
+  iframe.style.width = '100%';
+  iframe.style.height = '200px';
+  iframe.style.border = 'none';
+  
+  // Replace the placeholder with the iframe
+  els.pdfPreview.innerHTML = '';
+  els.pdfPreview.appendChild(iframe);
+  els.pdfPreview.classList.remove('preview-placeholder');
+  els.pdfPreview.classList.add('pdf-preview');
+  
+  // Make the preview clickable to open the modal
+  els.pdfPreview.onclick = () => {
+    els.pdfViewer.src = url;
+    els.pdfModal.style.display = 'flex';
+  };
+}
+
+// Reset preview to initial state
+function resetPreview() {
+  els.pdfPreview.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M10 9H8"></path>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+    </svg>
+    <p>PDF will be generated here</p>
+  `;
+  els.pdfPreview.classList.add('preview-placeholder');
+  els.pdfPreview.classList.remove('pdf-preview');
+  els.pdfPreview.onclick = null;
+}
+
+// Utility functions
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+function loadImage(src){ return new Promise(res => { const i = new Image(); i.onload = ()=>res(i); i.src = src; }); }
+</script>
+</body>
+</html>
